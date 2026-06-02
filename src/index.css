@@ -16,6 +16,16 @@
     text-rendering: geometricPrecision;
   }
 
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
   ::selection {
     background: rgba(255, 255, 255, 0.18);
   }

@@ -1,21 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeftRight, CircleDot, Diamond, Menu, X } from 'lucide-react';
+import { CheckCircle2, Menu, MessageCircle, X } from 'lucide-react';
 
 type Product = {
+  step: string;
   title: string;
   description: string;
   image: string;
   imageFirst?: boolean;
 };
 
-type Testimonial = {
-  name: string;
-  role: string;
-  company: string;
+type DemoStep = {
+  label: string;
+  caption: string;
+  step: string;
   video: string;
 };
 
-const navLinks = ['Servicios', 'Sectores', 'Carreras'];
+const navLinks = [
+  { label: 'El problema', href: '#problema' },
+  { label: 'Cómo funciona', href: '#como-funciona' },
+  { label: 'Precio', href: '#precio' },
+];
+
 const logos = [
   { name: 'Streambase', width: 'w-36' },
   { name: 'Gridway', width: 'w-28' },
@@ -28,53 +34,72 @@ const logos = [
   { name: 'Cloudwav', width: 'w-[10rem]' },
 ];
 
+const costCards: Array<[string, string]> = [
+  ['¿7 de cada 10?', 'presupuestos que no cierras: ¿es el precio o que nadie volvió a llamar?'],
+  ['48–72 h', 'la ventana para reenganchar a un cliente antes de que se enfríe'],
+  ['0 €', 'es lo que recupera un presupuesto al que no haces seguimiento'],
+];
+
 const products: Product[] = [
   {
-    title: 'Estrategia',
+    step: 'Paso 01',
+    title: 'Detectamos',
     description:
-      'Posicionamiento, ICP y messaging que alinean ventas y marketing para captar cuentas de alto valor.',
+      'Conectamos los presupuestos que ya has enviado y marcamos los que llevan días sin respuesta. Ves de un vistazo dónde se te está enfriando el dinero.',
     image:
       'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260529_044124_7d9e9e99-78d5-485c-8382-3d1685a93836.png&w=1920&q=85',
   },
   {
-    title: 'Demand Gen',
-    description: 'Campañas multicanal que generan pipeline cualificado y aceleran el ciclo comercial.',
+    step: 'Paso 02',
+    title: 'Reactivamos',
+    description:
+      'Hacemos el seguimiento por WhatsApp y email. Tú grabas una nota de voz y la convertimos en mensajes que suenan a ti, no a un robot.',
     image:
       'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260529_044042_d837e21b-4878-4dc8-a503-5e11792b7b82.png&w=1920&q=85',
     imageFirst: true,
   },
   {
-    title: 'Sales Enablement',
+    step: 'Paso 03',
+    title: 'Cierras',
     description:
-      'Contenido, secuencias y activos comerciales que convierten leads en reuniones y oportunidades cerradas.',
+      'El cliente responde y vuelve a tu agenda. Tú solo te sientas a cerrar la obra que ya dabas por perdida.',
     image:
       'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260529_044803_0c56d213-170c-4778-95dd-d0fe26470870.png&w=1920&q=85',
   },
 ];
 
-const testimonials: Testimonial[] = [
+const demos: DemoStep[] = [
   {
-    name: 'Matthias Richter Thornton-Lin',
-    role: 'Co-Founder & CTO',
-    company: 'Canopy',
+    label: 'Detección',
+    caption: 'Presupuestos sin respuesta, localizados',
+    step: '01',
     video:
       'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260529_045622_14f89baa-54da-423c-be49-a15ec5e4c393.mp4',
   },
   {
-    name: 'Priya Kaur',
-    role: 'Co-Founder',
-    company: 'Cloudwav',
+    label: 'Reactivación',
+    caption: 'Seguimiento por WhatsApp y email',
+    step: '02',
     video:
       'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260529_045633_7b0031d2-5d3e-4cc8-baba-a6ba8a9763d5.mp4',
   },
   {
-    name: 'Nikolai Sundstrom',
-    role: 'Head of Engineering',
-    company: 'Streambase',
+    label: 'Cierre',
+    caption: 'El cliente vuelve a tu agenda',
+    step: '03',
     video:
       'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260529_045649_60cbca55-5084-4577-b4f6-12390fac0ce4.mp4',
   },
 ];
+
+const primaryCta =
+  'inline-flex items-center justify-center gap-2 rounded-full bg-dark-100 px-5 py-2.5 text-sm font-semibold text-dark-950 transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-dark-950';
+
+const ghostCta =
+  'inline-flex items-center justify-center gap-2 rounded-full bg-white/[0.06] px-5 py-2.5 text-sm font-medium text-dark-100 transition-colors hover:bg-white/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-dark-950';
+
+const navLinkClass =
+  'rounded-full px-3 py-1.5 text-sm font-medium text-dark-200 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-dark-950';
 
 function ArrowIcon({ className = 'h-3.5 w-3.5' }: { className?: string }) {
   return (
@@ -95,10 +120,10 @@ function BrandLogo({ className = '' }: { className?: string }) {
     <span
       className={`inline-flex items-center gap-2 text-lg font-semibold tracking-tight text-white ${className}`}
     >
-      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-bold text-dark-950">
-        N
+      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-dark-950">
+        <MessageCircle className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
       </span>
-      Nexus B2B
+      [NOMBRE]
     </span>
   );
 }
@@ -109,37 +134,34 @@ function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-dark-950/[0.92] backdrop-blur-[10px]">
       <div className="mx-auto flex h-16 max-w-container items-center justify-between px-5 lg:px-0">
-        <a href="#" aria-label="Nexus B2B home" className="shrink-0">
+        <a
+          href="#"
+          aria-label="[NOMBRE] inicio"
+          className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-dark-950"
+        >
           <BrandLogo />
         </a>
 
         <nav className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase().replace(/ /g, '-')}`}
-              className="rounded-full px-3 py-1.5 text-sm font-medium text-dark-200 transition-colors hover:text-white"
-            >
-              {link}
+            <a key={link.href} href={link.href} className={navLinkClass}>
+              {link.label}
             </a>
           ))}
         </nav>
 
         <div className="hidden md:block">
-          <a
-            href="#contacto"
-            className="rounded-full px-3 py-1.5 text-sm font-medium text-dark-200 transition-colors hover:text-white"
-          >
-            Contactar
+          <a href="#reservar" className={primaryCta}>
+            Reservar diagnóstico
           </a>
         </div>
 
         <button
           type="button"
-          aria-label="Toggle navigation"
+          aria-label="Abrir navegación"
           aria-expanded={open}
           onClick={() => setOpen((value) => !value)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full text-dark-200 transition-colors hover:bg-white/[0.06] hover:text-white md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full text-dark-200 transition-colors hover:bg-white/[0.06] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-dark-950 md:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -148,16 +170,23 @@ function Header() {
       {open && (
         <div className="border-t border-white/[0.06] bg-dark-950/[0.96] px-5 py-4 backdrop-blur-[10px] md:hidden">
           <nav className="mx-auto flex max-w-container flex-col gap-1">
-            {[...navLinks, 'Contactar'].map((link) => (
+            {navLinks.map((link) => (
               <a
-                key={link}
-                href={`#${link.toLowerCase().replace(/ /g, '-')}`}
+                key={link.href}
+                href={link.href}
                 onClick={() => setOpen(false)}
-                className="rounded-2xl px-3 py-3 text-sm font-medium text-dark-200 transition-colors hover:bg-white/[0.06] hover:text-white"
+                className="rounded-2xl px-3 py-3 text-sm font-medium text-dark-200 transition-colors hover:bg-white/[0.06] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
-                {link}
+                {link.label}
               </a>
             ))}
+            <a
+              href="#reservar"
+              onClick={() => setOpen(false)}
+              className="mt-2 rounded-2xl bg-dark-100 px-3 py-3 text-center text-sm font-semibold text-dark-950 transition-colors hover:bg-white"
+            >
+              Reservar diagnóstico
+            </a>
           </nav>
         </div>
       )}
@@ -168,8 +197,8 @@ function Header() {
 function AnnouncementPill() {
   return (
     <a
-      href="#"
-      className="group relative inline-flex overflow-hidden rounded-full p-px text-sm font-medium text-dark-100"
+      href="#como-funciona"
+      className="group relative inline-flex overflow-hidden rounded-full p-px text-sm font-medium text-dark-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-dark-950"
     >
       <span
         aria-hidden="true"
@@ -180,7 +209,7 @@ function AnnouncementPill() {
         }}
       />
       <span className="relative inline-flex items-center gap-2 rounded-full bg-dark-800 px-4 py-2.5 transition-colors group-hover:bg-dark-700">
-        Nexus B2B cierra ronda Serie A de €12M
+        Reactivación automática de presupuestos
         <ArrowIcon className="h-3 w-3" />
       </span>
     </a>
@@ -192,22 +221,26 @@ function Hero() {
     <section className="px-5 pt-16 pb-16 md:pt-[6.75rem] md:pb-[6.75rem] lg:px-10">
       <div className="mx-auto flex max-w-container flex-col items-center text-center">
         <AnnouncementPill />
-        <h1 className="mt-8 max-w-[41.875rem] text-5xl font-medium leading-[1.05] tracking-tight md:text-[80px]">
-          Marketing B2B para empresas que escalan
+        <h1 className="mt-8 max-w-[56rem] text-pretty text-[2.5rem] font-medium leading-[1.07] tracking-tight sm:text-5xl md:text-[3.5rem] md:leading-[1.05]">
+          Recupera los presupuestos de reforma que ya dabas por perdidos
         </h1>
-        <p className="mt-7 max-w-[56.5625rem] text-lg leading-relaxed md:text-2xl md:leading-relaxed">
-          <span className="text-dark-100">Nexus B2B diseña estrategias de crecimiento</span>{' '}
+        <p className="mt-7 max-w-[52rem] text-pretty text-lg leading-relaxed md:text-2xl md:leading-relaxed">
+          <span className="text-dark-100">Para empresas de reformas que envían presupuestos altos.</span>{' '}
           <span className="text-dark-300">
-            para captar cuentas enterprise, acelerar pipeline y alinear equipos comerciales en mercados globales.
+            Hacemos el seguimiento por ti por WhatsApp y email, y reactivamos a los clientes que no
+            contestaron. Tú solo grabas una nota de voz.
           </span>
         </p>
-        <a
-          href="#contacto"
-          className="mt-8 inline-flex items-center gap-2 rounded-full bg-dark-100 px-5 py-2.5 text-sm font-semibold text-dark-950 transition-colors hover:bg-white"
-        >
-          Empezar ahora
-          <ArrowIcon />
-        </a>
+        <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
+          <a href="#reservar" className={primaryCta}>
+            Ver dónde pierdes presupuestos
+            <ArrowIcon />
+          </a>
+          <a href="#como-funciona" className={ghostCta}>
+            Cómo funciona
+          </a>
+        </div>
+        <p className="mt-5 text-sm text-dark-400">Desde 499€/mes · Sin permanencia</p>
       </div>
     </section>
   );
@@ -253,32 +286,31 @@ function LogoMarquee() {
   );
 }
 
-function Stats() {
-  const cards = [
-    ['€48M+', 'pipeline generado al año'],
-    ['3.2x', 'ROI medio en campañas'],
-    ['<30 días', 'para lanzar una campaña'],
-  ];
-
+function Problem() {
   return (
-    <section id="servicios" className="px-5 py-12 md:py-20 lg:px-10">
+    <section id="problema" className="px-5 py-12 md:py-20 lg:px-10">
       <div className="mx-auto max-w-container">
-        <div className="max-w-2xl">
-          <h2 className="text-3xl font-medium tracking-tight md:text-[48px] md:leading-tight">
-            Resultados que hablan solos
+        <div className="max-w-3xl">
+          <h2 className="text-pretty text-3xl font-medium leading-tight tracking-tight md:text-[40px]">
+            El dinero no está en el presupuesto. Está en el seguimiento.
           </h2>
-          <p className="mt-4 max-w-lg text-base leading-relaxed text-dark-300 md:text-lg">
-            Nexus B2B ha impulsado el crecimiento de cientos de empresas en más de 20 mercados.
+          <p className="mt-4 max-w-prose text-pretty text-base leading-relaxed text-dark-300 md:text-lg">
+            Una reforma grande casi nunca se cierra a la primera. Si no vuelves a contactar, el
+            cliente se enfría y acaba llamando al que sí insistió.
           </p>
         </div>
         <div className="mt-9 flex flex-col gap-3 md:flex-row">
-          {cards.map(([value, label]) => (
+          {costCards.map(([value, label]) => (
             <div
               key={value}
-              className="flex min-h-[8.5rem] flex-1 flex-col items-center justify-center rounded-2xl bg-dark-700 p-6 text-center md:min-h-[8.875rem]"
+              className="flex min-h-[9.5rem] flex-1 flex-col items-center justify-center rounded-2xl bg-dark-700 p-6 text-center"
             >
-              <div className="text-2xl font-medium tracking-tight md:text-[30px]">{value}</div>
-              <div className="mt-2 text-sm text-dark-300 md:text-base">{label}</div>
+              <div className="text-balance text-2xl font-medium tracking-tight md:text-[30px]">
+                {value}
+              </div>
+              <div className="mt-2 max-w-xs text-pretty text-sm leading-relaxed text-dark-300 md:text-base">
+                {label}
+              </div>
             </div>
           ))}
         </div>
@@ -294,20 +326,28 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <article className="grid min-h-[25rem] grid-cols-1 overflow-hidden rounded-2xl bg-dark-800 md:grid-cols-2">
       <div className={`${textOrder} flex flex-col justify-center p-8 md:p-12`}>
-        <h3 className="text-2xl font-medium tracking-tight md:text-[30px]">{product.title}</h3>
-        <p className="mt-4 max-w-md leading-relaxed text-dark-300">{product.description}</p>
+        <span className="text-sm font-semibold uppercase tracking-wider text-dark-400">
+          {product.step}
+        </span>
+        <h3 className="mt-4 text-2xl font-medium tracking-tight md:text-[30px]">{product.title}</h3>
+        <p className="mt-4 max-w-md text-pretty leading-relaxed text-dark-300">
+          {product.description}
+        </p>
         <a
-          href="#"
-          className="mt-7 inline-flex w-fit items-center gap-2 rounded-full bg-white/[0.04] px-4 py-2 text-sm font-medium text-dark-100 backdrop-blur-[10px] transition-colors hover:bg-white/10"
+          href="#reservar"
+          className="mt-7 inline-flex w-fit items-center gap-2 rounded-full bg-white/[0.04] px-4 py-2 text-sm font-medium text-dark-100 backdrop-blur-[10px] transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-dark-950"
         >
-          Saber más
+          Reservar diagnóstico
           <ArrowIcon />
         </a>
       </div>
-      <div className={`${imageOrder} relative min-h-[18rem] bg-dark-700 bg-[radial-gradient(circle_at_50%_45%,rgba(255,255,255,0.12),rgba(255,255,255,0.035)_42%,rgba(0,0,0,0)_100%)] md:min-h-full`}>
+      <div
+        className={`${imageOrder} relative min-h-[18rem] bg-dark-700 bg-[radial-gradient(circle_at_50%_45%,rgba(255,255,255,0.12),rgba(255,255,255,0.035)_42%,rgba(0,0,0,0)_100%)] md:min-h-full`}
+      >
         <img
           src={product.image}
-          alt={`${product.title} infrastructure preview`}
+          alt={`${product.title}: ${product.description}`}
+          loading="lazy"
           className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
@@ -317,19 +357,20 @@ function ProductCard({ product }: { product: Product }) {
 
 function Products() {
   return (
-    <section className="px-5 py-12 md:py-20 lg:px-10">
+    <section id="como-funciona" className="px-5 py-12 md:py-20 lg:px-10">
       <div className="mx-auto max-w-container">
         <div className="max-w-2xl">
-          <h2 className="text-3xl font-medium tracking-tight md:text-[48px] md:leading-tight">
-            Servicios diseñados para B2B
+          <h2 className="text-balance text-3xl font-medium tracking-tight md:text-[48px] md:leading-tight">
+            Una sola cosa, bien hecha
           </h2>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-dark-300 md:text-lg">
-            Estrategia, demand generation y enablement comercial en un solo partner de crecimiento.
+          <p className="mt-4 max-w-prose text-pretty text-base leading-relaxed text-dark-300 md:text-lg">
+            Seguimiento automático de tus presupuestos por WhatsApp y email. Tres pasos. Tú apenas
+            mueves un dedo.
           </p>
         </div>
         <div className="mt-9 flex flex-col gap-4">
           {products.map((product) => (
-            <ProductCard key={product.title} product={product} />
+            <ProductCard key={product.step} product={product} />
           ))}
         </div>
       </div>
@@ -337,31 +378,34 @@ function Products() {
   );
 }
 
-function Testimonials() {
+function ProductDemos() {
   const [active, setActive] = useState(0);
 
   return (
     <section className="px-5 py-12 md:py-20 lg:px-10">
       <div className="mx-auto max-w-[84rem]">
         <div className="mx-auto max-w-container">
-          <h2 className="text-3xl font-medium tracking-tight md:text-[48px] md:leading-tight">
-            Confianza de líderes B2B
+          <h2 className="text-balance text-3xl font-medium tracking-tight md:text-[48px] md:leading-tight">
+            Míralo funcionando
           </h2>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-dark-300 md:text-lg">
-            Directivos y equipos comerciales que escalan con Nexus B2B.
+          <p className="mt-4 max-w-prose text-pretty text-base leading-relaxed text-dark-300 md:text-lg">
+            Cada paso del sistema, en marcha: de detectar el presupuesto frío a recuperar al cliente.
           </p>
         </div>
         <div className="mt-9 flex flex-col gap-3 md:h-[30rem] md:flex-row">
-          {testimonials.map((item, index) => {
+          {demos.map((item, index) => {
             const isActive = active === index;
             return (
               <button
-                key={item.name}
+                key={item.label}
                 type="button"
                 onClick={() => setActive(index)}
                 onMouseEnter={() => setActive(index)}
-                className={`group relative h-[25rem] overflow-hidden rounded-2xl border-2 text-left transition-all duration-500 ease-in-out md:h-[30rem] ${
-                  isActive ? 'border-white/10 bg-dark-800 bg-[radial-gradient(circle_at_50%_38%,rgba(255,255,255,0.13),rgba(255,255,255,0.025)_48%,rgba(0,0,0,0)_100%)] md:flex-[5]' : 'border-white/[0.07] bg-dark-800 bg-[radial-gradient(circle_at_50%_38%,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_48%,rgba(0,0,0,0)_100%)] md:flex-1'
+                aria-pressed={isActive}
+                className={`group relative h-[25rem] overflow-hidden rounded-2xl border-2 text-left transition-all duration-500 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-dark-950 md:h-[30rem] ${
+                  isActive
+                    ? 'border-white/10 bg-dark-800 bg-[radial-gradient(circle_at_50%_38%,rgba(255,255,255,0.13),rgba(255,255,255,0.025)_48%,rgba(0,0,0,0)_100%)] md:flex-[5]'
+                    : 'border-white/[0.07] bg-dark-800 bg-[radial-gradient(circle_at_50%_38%,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_48%,rgba(0,0,0,0)_100%)] md:flex-1'
                 }`}
               >
                 <video
@@ -379,11 +423,11 @@ function Testimonials() {
                   }`}
                 >
                   <div>
-                    <div className="text-base font-medium text-white">{item.name}</div>
-                    <div className="mt-1 text-sm text-dark-200">{item.role}</div>
+                    <div className="text-base font-medium text-white">{item.label}</div>
+                    <div className="mt-1 text-sm text-dark-200">{item.caption}</div>
                   </div>
                   <div className="hidden text-sm font-semibold uppercase tracking-wider text-white/70 md:block">
-                    {item.company}
+                    {item.step}
                   </div>
                 </div>
               </button>
@@ -395,70 +439,52 @@ function Testimonials() {
   );
 }
 
-function Industries() {
-  const industryCards = [
-    {
-      title: 'SaaS & Plataformas',
-      icon: ArrowLeftRight,
-      stat: '55+',
-      label: 'cuentas activas',
-      company: 'CANOPY',
-      description:
-        'Canopy multiplica su pipeline enterprise con campañas ABM y contenido de valor en Nexus B2B.',
-    },
-    {
-      title: 'Fintech & Data',
-      icon: Diamond,
-      stat: '85B',
-      label: 'impresiones al mes',
-      company: 'VAULTLY',
-      description:
-        'Vaultly escala su presencia en mercados regulados con estrategia de contenidos y lead nurturing.',
-    },
-    {
-      title: 'Media & Tech',
-      icon: CircleDot,
-      stat: '5M+',
-      label: 'leads cualificados',
-      company: 'STREAMBASE',
-      description:
-        'Streambase acelera su go-to-market global con demand gen y sales enablement de Nexus B2B.',
-    },
+function Pricing() {
+  const includes = [
+    'Seguimiento automático por WhatsApp y email',
+    'Personalización con tu nota de voz',
+    'Reactivación de presupuestos sin respuesta',
+    'Puesta en marcha incluida el primer mes',
   ];
 
   return (
-    <section id="sectores" className="px-5 py-12 md:py-20 lg:px-10">
+    <section id="precio" className="px-5 py-12 md:py-20 lg:px-10">
       <div className="mx-auto max-w-container">
-        <div className="max-w-2xl">
-          <h2 className="text-3xl font-medium tracking-tight md:text-[48px] md:leading-tight">
-            Empresas que crecen con Nexus B2B
-          </h2>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-dark-300 md:text-lg">
-            Las compañías B2B más ambiciosas confían en nosotros para escalar ingresos recurrentes.
-          </p>
-        </div>
-        <div className="mt-9 grid grid-cols-1 gap-3 md:grid-cols-3">
-          {industryCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <a
-                key={card.title}
-                href="#"
-                className="rounded-2xl bg-dark-800 p-6 transition-colors hover:bg-dark-700/80 md:p-12"
-              >
-                <Icon className="h-6 w-6 text-dark-400" />
-                <h3 className="mt-12 text-lg font-medium">{card.title}</h3>
-                <div className="mt-8 text-4xl font-medium tracking-tight md:text-[48px]">
-                  {card.stat}
-                </div>
-                <div className="mt-1 text-sm text-dark-300">{card.label}</div>
-                <div className="mt-10 text-sm font-semibold uppercase tracking-wider text-dark-400">
-                  {card.company}
-                </div>
-                <p className="mt-4 text-sm leading-relaxed text-dark-300">{card.description}</p>
-              </a>
-            );
-          })}
+        <div className="mx-auto grid max-w-4xl overflow-hidden rounded-2xl bg-dark-800 md:grid-cols-2">
+          <div className="flex flex-col justify-center gap-5 p-8 md:p-12">
+            <span className="text-sm font-semibold uppercase tracking-wider text-dark-400">
+              Una sola oferta. Sin paquetes.
+            </span>
+            <h2 className="text-balance text-2xl font-medium tracking-tight md:text-[32px] md:leading-tight">
+              El seguimiento, hecho por nosotros
+            </h2>
+            <ul className="flex flex-col gap-3">
+              {includes.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm text-dark-200 md:text-base">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden="true" />
+                  <span className="text-pretty">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex flex-col justify-center gap-5 border-t border-white/[0.06] bg-dark-700/40 p-8 md:border-l md:border-t-0 md:p-12">
+            <div className="flex items-baseline gap-2">
+              <span className="text-5xl font-medium tracking-tight md:text-6xl">499€</span>
+              <span className="text-base text-dark-300">/mes</span>
+            </div>
+            <div className="flex flex-col gap-2 text-sm leading-relaxed text-dark-300">
+              <p>Sin permanencia. Cancelas cuando quieras.</p>
+              <p>Primer mes 594€ — incluye instalación y puesta en marcha.</p>
+            </div>
+            <a href="#reservar" className={`${primaryCta} w-full`}>
+              Reservar diagnóstico
+              <ArrowIcon />
+            </a>
+            <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/[0.06] px-3 py-1.5 text-xs font-medium text-dark-100">
+              <span className="h-1.5 w-1.5 rounded-full bg-white" aria-hidden="true" />
+              Sin permanencia
+            </span>
+          </div>
         </div>
       </div>
     </section>
@@ -547,25 +573,26 @@ function GlobeCanvas() {
   );
 }
 
-function GlobeCTA() {
+function FinalCTA() {
   return (
-    <section id="contacto" className="px-5 py-12 md:py-20 lg:px-10">
+    <section id="reservar" className="px-5 py-12 md:py-20 lg:px-10">
       <div className="relative mx-auto flex min-h-[30rem] max-w-container overflow-hidden rounded-2xl bg-dark-800 px-6 py-20 md:px-12">
         <GlobeCanvas />
-        <div className="relative z-10 mx-auto flex max-w-[35rem] flex-col items-center justify-center text-center">
-          <h2 className="text-3xl font-medium tracking-tight md:text-[48px] md:leading-tight">
-            Crecimiento B2B para equipos modernos
+        <div className="relative z-10 mx-auto flex max-w-[46rem] flex-col items-center justify-center text-center">
+          <h2 className="text-balance text-3xl font-medium leading-tight tracking-tight md:text-[40px]">
+            ¿Cuántos presupuestos tienes ahora mismo sin respuesta?
           </h2>
-          <a
-            href="#contacto"
-            className="mt-7 inline-flex items-center gap-2 rounded-full bg-dark-100 px-5 py-2.5 text-sm font-semibold text-dark-950 transition-colors hover:bg-white"
-          >
-            Empezar ahora
+          <p className="mt-5 max-w-prose text-pretty text-base leading-relaxed text-dark-300 md:text-lg">
+            En el diagnóstico te enseñamos cuánto dinero hay parado y cómo lo reactivamos. Gratis y
+            sin compromiso.
+          </p>
+          <a href="#reservar" className={`${primaryCta} mt-7`}>
+            Reservar diagnóstico
             <ArrowIcon />
           </a>
           <div className="mt-7 inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-4 py-2 text-sm text-dark-100 backdrop-blur-md">
-            <span className="text-white/40">pipeline.nexusb2b</span>
-            <span className="text-white/70">lead -&gt; MQL</span>
+            <span className="text-white/40">presupuesto</span>
+            <span className="text-white/70">→ seguimiento → cerrado</span>
           </div>
         </div>
       </div>
@@ -575,33 +602,47 @@ function GlobeCTA() {
 
 function Footer() {
   const columns = [
-    ['Servicios', 'Estrategia', 'Demand Gen', 'Sales Enablement', 'Contenidos'],
-    ['Sectores', 'SaaS & Plataformas', 'Fintech & Data', 'Media & Tech'],
-    ['Carreras', 'Sobre nosotros', 'Trabaja con nosotros'],
-    ['Contacto', 'X (Twitter)', 'LinkedIn', 'Agendar demo'],
+    {
+      title: 'Producto',
+      links: [
+        { label: 'El problema', href: '#problema' },
+        { label: 'Cómo funciona', href: '#como-funciona' },
+        { label: 'Precio', href: '#precio' },
+      ],
+    },
+    {
+      title: 'Contacto',
+      links: [
+        { label: 'Reservar diagnóstico', href: '#reservar' },
+        { label: 'WhatsApp', href: '#' },
+        { label: 'LinkedIn', href: '#' },
+      ],
+    },
   ];
 
   return (
-    <footer id="carreras" className="px-5 py-12 md:py-20 lg:px-10">
+    <footer className="px-5 py-12 md:py-20 lg:px-10">
       <div className="mx-auto max-w-container">
         <div className="grid gap-12 border-t border-white/[0.08] pt-10 md:grid-cols-[1fr_2fr]">
           <div>
             <BrandLogo />
-            <p className="mt-6 text-sm text-white/40">Agencia B2B</p>
-            <p className="mt-2 text-sm text-white/40">(c)2026 Nexus B2B, S.L.</p>
+            <p className="mt-6 max-w-xs text-pretty text-sm text-white/40">
+              Seguimiento automático de presupuestos para empresas de reformas en España.
+            </p>
+            <p className="mt-2 text-sm text-white/40">© 2026 [NOMBRE]</p>
           </div>
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {columns.map(([title, ...links]) => (
-              <div key={title}>
-                <h3 className="text-sm font-medium text-white">{title}</h3>
+          <div className="grid grid-cols-2 gap-8">
+            {columns.map((column) => (
+              <div key={column.title}>
+                <h3 className="text-sm font-medium text-white">{column.title}</h3>
                 <ul className="mt-4 space-y-3">
-                  {links.map((link) => (
-                    <li key={link}>
+                  {column.links.map((link) => (
+                    <li key={link.label}>
                       <a
-                        href="#"
-                        className="text-sm text-white/45 transition-colors hover:text-white/70"
+                        href={link.href}
+                        className="rounded text-sm text-white/45 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                       >
-                        {link}
+                        {link.label}
                       </a>
                     </li>
                   ))}
@@ -610,20 +651,22 @@ function Footer() {
             ))}
           </div>
         </div>
-        <div className="mt-12 flex flex-col gap-4 border-t border-white/[0.08] pt-6 md:flex-row md:items-start md:justify-between">
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/[0.08] pt-6 md:flex-row md:items-center md:justify-between">
           <div className="flex gap-5">
-            <a href="#" className="text-sm text-white/45 transition-colors hover:text-white/70">
-              Terms
+            <a
+              href="#"
+              className="rounded text-sm text-white/45 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            >
+              Aviso legal
             </a>
-            <a href="#" className="text-sm text-white/45 transition-colors hover:text-white/70">
-              Privacy
+            <a
+              href="#"
+              className="rounded text-sm text-white/45 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            >
+              Privacidad
             </a>
           </div>
-          <p className="max-w-2xl text-xs leading-relaxed text-white/25">
-            Arc Cloud examples, infrastructure metrics, partner names and availability details on this page are
-            illustrative for product demonstration purposes. Actual availability, performance and terms vary by
-            workload, region, agreement and implementation.
-          </p>
+          <p className="text-sm text-white/40">Desde 499€/mes · Sin permanencia</p>
         </div>
       </div>
     </footer>
@@ -637,11 +680,11 @@ function App() {
       <Hero />
       <VideoHero />
       <LogoMarquee />
-      <Stats />
+      <Problem />
       <Products />
-      <Testimonials />
-      <Industries />
-      <GlobeCTA />
+      <ProductDemos />
+      <Pricing />
+      <FinalCTA />
       <Footer />
     </main>
   );
